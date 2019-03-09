@@ -270,7 +270,7 @@ class Plot(object):
                 c=color,
                 s=200,
                 marker='o',
-                cmap=cm.get_cmap(),
+                cmap=cm.get_cmap('jet'),
                 vmin=0,
                 vmax=colorbar_vmax,
                 alpha=0.95)
