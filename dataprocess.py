@@ -140,8 +140,7 @@ class Dataprocess(object):
                 # save report
                 report_fname = '-'.join(
                     [ctype, gsystem, str(date), 'report.csv'])
-                report_path = os.path.join(self.respath, '-'.join(
-                    [ctype, gsystem]), str(date))
+                report_path = os.path.join(self.respath, str(date), '-'.join([ctype, gsystem]))
                 if not os.path.exists(report_path):
                     os.makedirs(report_path)
                 report.to_csv(
