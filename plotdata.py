@@ -154,8 +154,7 @@ class Plot(object):
                 # save figure
                 fig_name = '%s-%s-%s-ENU%d' % (ctype, gsystem, str(date),
                                                fig_number)
-                fig_path = os.path.join(respath, '-'.join([ctype, gsystem]),
-                                        str(date))
+                fig_path = os.path.join(respath, str(date), '-'.join([ctype, gsystem]))
                 if not os.path.exists(fig_path):
                     os.makedirs(fig_path)
                 plt.savefig(
@@ -199,13 +198,15 @@ class Plot(object):
 
         latitude = list()
         longtitude = list()
-        for name in report.name:
+        index = list()
+        for i, name in enumerate(report.name):
             cur.execute('SELECT B, L FROM Station WHERE name=?',
                         (name.lower(), ))
             try:
                 cur_fetch = cur.fetchone()
                 latitude.append(cur_fetch[0])
                 longtitude.append(cur_fetch[1])
+                index.append(i)
             except:
                 continue
 
@@ -234,11 +235,13 @@ class Plot(object):
             cbar_pad=0.1)
         for ax, i in zip(grid, [0, 1]):
             if i == 0:
-                title = 'Horizontal Errors'
-                color = report.H_95.values
+                color = [report.H_95.values[i] for i in index]
+                mean = sum(color) / len(color)
+                title = 'Horizontal Errors [mean:%.3f]' % mean
             else:
-                title = 'Vertical Errors'
-                color = report.U_95.values
+                color = [report.U_95.values[i] for i in index]
+                mean = sum(color) / len(color)
+                title = 'Vertical Errors [mean:%.3f]' % mean
             ax.set_title(title, size=22, weight='bold')
             m = Basemap(
                 projection='cyl',
@@ -284,8 +287,7 @@ class Plot(object):
             size=24,
             weight='bold')
         fig_name = '-'.join([ctype, gsystem, str(date), 'HV'])
-        fig_path = os.path.join(filepath, '-'.join([ctype, gsystem]),
-                                str(date))
+        fig_path = os.path.join(filepath, str(date), '-'.join([ctype, gsystem]))
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
         plt.savefig(
@@ -338,7 +340,7 @@ class Plot(object):
                 weight='bold')
             plt.legend(markerscale=0, prop={'size': 12, 'weight': 'bold'})
             fig_name = '-'.join([gsystem, str(date), 'satnum.png'])
-            fig_path = os.path.join(filepath, 'Correct', str(date))
+            fig_path = os.path.join(filepath, str(date), 'Correct')
             if not os.path.exists(fig_path):
                 os.makedirs(fig_path)
             plt.savefig(os.path.join(fig_path, fig_name), bbox_inches='tight')
@@ -374,7 +376,7 @@ class Plot(object):
             size=25,
             weight='bold')
         fig_name = '-'.join([prn, str(date), 'satiode.png'])
-        fig_path = os.path.join(filepath, 'Correct', str(date))
+        fig_path = os.path.join(filepath, str(date), 'Correct')
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
         plt.savefig(os.path.join(fig_path, fig_name), bbox_inches='tight')
@@ -419,7 +421,7 @@ class Plot(object):
         f.suptitle(title, size=25, weight='bold')
         # save figure
         fig_name = '-'.join([prn, str(date), 'orbit-clock.png'])
-        fig_path = os.path.join(filepath, 'Correct', str(date))
+        fig_path = os.path.join(filepath, str(date), 'Correct')
         if not os.path.exists(fig_path):
             os.makedirs(fig_path)
         plt.savefig(os.path.join(fig_path, fig_name), bbox_inches='tight')
